@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: #d4af37;
+  color: #3f0a17;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #fff8ec;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#d4af37, #a9832a);
+  border-radius: 10px;
+}
+
+@layer components {
+  .section-container {
+    @apply mx-auto max-w-6xl px-6 sm:px-8;
+  }
+
+  .section-tag {
+    @apply inline-block font-body font-semibold tracking-[0.25em] uppercase text-xs sm:text-sm text-maroon/80 relative pl-8 mb-3;
+  }
+  .section-tag::before {
+    content: "";
+    @apply absolute left-0 top-1/2 -translate-y-1/2 w-6 h-[2px] bg-gold;
+  }
+  .section-tag.center {
+    @apply pl-0 mx-auto;
+  }
+  .section-tag.center::before {
+    content: none;
+  }
+
+  .section-title {
+    @apply font-heading font-bold text-3xl sm:text-4xl md:text-[2.6rem] leading-tight text-maroon-dark mb-4;
+  }
+  .section-title.center {
+    @apply text-center mx-auto;
+  }
+
+  .section-desc {
+    @apply text-ink/70 leading-relaxed text-[0.98rem] sm:text-base mb-6 max-w-xl;
+  }
+  .section-desc.center {
+    @apply mx-auto text-center max-w-2xl;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 font-body font-semibold text-sm sm:text-[0.95rem] tracking-wide transition-all duration-300 ease-out;
+  }
+  .btn-gold {
+    @apply bg-gold-gradient bg-[length:200%_200%] text-maroon-dark shadow-gold hover:scale-105 hover:shadow-[0_12px_40px_rgba(212,175,55,0.55)] active:scale-95;
+  }
+  .btn-outline {
+    @apply border-2 border-gold/70 text-cream hover:bg-gold/15 hover:border-gold hover:scale-105 active:scale-95;
+  }
+  .btn-maroon {
+    @apply bg-maroon text-cream shadow-card hover:bg-maroon-dark hover:scale-105 active:scale-95;
+  }
+
+  .card-link {
+    @apply inline-flex items-center gap-2 text-maroon font-semibold text-sm mt-2 transition-all duration-300 group-hover:gap-3 group-hover:text-gold-dark;
+  }
+}
+
+/* ---------- Mandala ring ornaments ---------- */
+.mandala-ring {
+  border-radius: 9999px;
+  border: 1px dashed rgba(212, 175, 55, 0.5);
+}
+
+/* ---------- Marquee ---------- */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+}
+
+/* ---------- Petals ---------- */
+.petal {
+  position: absolute;
+  top: -5vh;
+  border-radius: 0 100% 0 100%;
+  background: radial-gradient(circle at 30% 30%, #f3d78a, #d4af37 70%);
+  opacity: 0.85;
+  pointer-events: none;
+  animation-name: petalFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* ---------- Ghungroo bells ---------- */
+.ghungroo {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 30%, #f8e6ad, #d4af37 60%, #a9832a 100%);
+  box-shadow: 0 2px 6px rgba(63, 10, 23, 0.35);
+}
+
+/* ---------- Gold shimmer text ---------- */
+.text-shimmer {
+  background: linear-gradient(90deg, #f3d78a 0%, #ffffff 25%, #d4af37 50%, #f3d78a 75%, #ffffff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Timeline ---------- */
+.timeline-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    #d4af37 0px,
+    #d4af37 8px,
+    transparent 8px,
+    transparent 16px
+  );
+}
+
+/* ---------- Gallery caption overlay ---------- */
+.gallery-overlay {
+  background: linear-gradient(to top, rgba(63, 10, 23, 0.92) 0%, rgba(63, 10, 23, 0.15) 60%, transparent 100%);
+}
