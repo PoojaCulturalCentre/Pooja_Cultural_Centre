@@ -31,9 +31,9 @@ export default function Contact() {
         alt=""
         fill
         sizes="100vw"
-        className="object-cover object-center opacity-[0.08] pointer-events-none"
+        className="object-cover object-center opacity-[0.16] pointer-events-none"
       />
-      <div className="absolute inset-0 bg-white/85" />
+      <div className="absolute inset-0 bg-white/70" />
 
       <div className="section-container relative z-10 grid md:grid-cols-2 gap-14">
         <motion.div

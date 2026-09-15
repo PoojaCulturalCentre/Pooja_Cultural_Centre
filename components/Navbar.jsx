@@ -8,6 +8,16 @@ import LanguageSwitcher from "./LanguageSwitcher";
 const LINK_HREFS = ["#home", "#about", "#guru", "#classes", "#gallery", "#events", "#testimonials", "#contact"];
 const LINK_KEYS = ["home", "about", "guru", "classes", "gallery", "events", "testimonials", "contact"];
 
+const menuContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
+};
+
+const menuItem = {
+  hidden: { opacity: 0, x: -16 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" } },
+};
+
 export default function Navbar() {
   const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
@@ -26,8 +36,8 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-maroon-dark/95 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.25)] py-2"
-          : "bg-transparent py-4"
+          ? "bg-maroon-dark/95 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.25)] py-3"
+          : "bg-transparent py-5"
       }`}
     >
       <div className="mx-auto w-full max-w-[100rem] px-6 sm:px-8 flex items-center justify-between gap-4">
@@ -40,19 +50,19 @@ export default function Navbar() {
           </span>
         </a>
 
-        <nav className="hidden 2xl:flex items-center gap-4 shrink-0">
+        <nav className="hidden xl:flex items-center gap-3.5 shrink-0">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="relative text-cream/90 text-[0.8rem] font-medium tracking-wide whitespace-nowrap hover:text-gold transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[1.5px] after:w-0 after:bg-gold hover:after:w-full after:transition-all after:duration-300"
+              className="relative text-cream/90 text-[0.78rem] font-medium tracking-wide whitespace-nowrap hover:text-gold transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[1.5px] after:w-0 after:bg-gold hover:after:w-full after:transition-all after:duration-300"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <div className="hidden 2xl:flex items-center gap-5 shrink-0">
+        <div className="hidden xl:flex items-center gap-4 shrink-0">
           <LanguageSwitcher />
           <a href="#contact" className="btn btn-gold !py-2.5 !px-5 text-xs whitespace-nowrap">
             {t.nav.bookFreeClass}
@@ -60,7 +70,7 @@ export default function Navbar() {
         </div>
 
         <button
-          className="2xl:hidden flex flex-col gap-1.5 w-8 h-8 items-center justify-center shrink-0"
+          className="xl:hidden flex flex-col gap-1.5 w-8 h-8 items-center justify-center shrink-0"
           aria-label="Toggle menu"
           onClick={() => setOpen((o) => !o)}
         >
@@ -86,24 +96,40 @@ export default function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="2xl:hidden overflow-hidden bg-maroon-dark/98 backdrop-blur-md"
+            className="xl:hidden overflow-hidden bg-maroon-dark/98 backdrop-blur-md border-t border-cream/10"
           >
-            <div className="flex flex-col gap-1 px-6 pb-6 pt-2">
-              <LanguageSwitcher variant="mobile" />
+            <motion.div
+              variants={menuContainer}
+              initial="hidden"
+              animate="show"
+              className="max-w-md mx-auto flex flex-col gap-1.5 px-6 py-6"
+            >
+              <motion.div variants={menuItem} className="flex justify-center pb-4 mb-2 border-b border-cream/10">
+                <LanguageSwitcher variant="mobile" />
+              </motion.div>
+
               {links.map((link) => (
-                <a
+                <motion.a
                   key={link.href}
+                  variants={menuItem}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="text-cream/90 py-2.5 border-b border-cream/10 text-sm font-medium hover:text-gold hover:pl-2 transition-all duration-300"
+                  className="flex items-center justify-between rounded-xl px-4 py-3.5 text-cream/90 text-[0.95rem] font-medium hover:bg-cream/10 hover:text-gold transition-colors duration-300"
                 >
                   {link.label}
-                </a>
+                  <span className="text-gold/50">→</span>
+                </motion.a>
               ))}
-              <a href="#contact" onClick={() => setOpen(false)} className="btn btn-gold mt-4 !py-2.5">
+
+              <motion.a
+                variants={menuItem}
+                href="#contact"
+                onClick={() => setOpen(false)}
+                className="btn btn-gold justify-center mt-4 !py-3"
+              >
                 {t.nav.bookFreeClass}
-              </a>
-            </div>
+              </motion.a>
+            </motion.div>
           </motion.nav>
         )}
       </AnimatePresence>
