@@ -1,16 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import AnimatedCounter from "./AnimatedCounter";
-
-const stats = [
-  { to: 20, label: "Years of Legacy" },
-  { to: 500, label: "Students Trained" },
-  { to: 120, label: "Performances" },
-  { to: 35, label: "Awards Won" },
-];
+import { ABOUT_PHOTO } from "@/lib/photos";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function About() {
+  const { t } = useLanguage();
+  const stats = [
+    { to: 20, label: t.about.statLegacy },
+    { to: 500, label: t.about.statStudents },
+    { to: 120, label: t.about.statPerformances },
+    { to: 35, label: t.about.statAwards },
+  ];
+
   return (
     <section id="about" className="py-24 sm:py-32 bg-cream overflow-hidden">
       <div className="section-container grid md:grid-cols-2 gap-14 md:gap-10 items-center">
@@ -25,8 +29,15 @@ export default function About() {
             {/* Rotating dashed ring */}
             <div className="absolute -inset-4 rounded-[2rem] mandala-ring animate-spin-slow" />
             {/* Frame */}
-            <div className="absolute inset-0 rounded-[1.5rem] bg-gradient-to-br from-maroon to-maroon-dark shadow-card flex items-center justify-center overflow-hidden">
-              <span className="text-8xl drop-shadow-[0_4px_18px_rgba(212,175,55,0.45)]">💃</span>
+            <div className="absolute inset-0 rounded-[1.5rem] shadow-card overflow-hidden">
+              <Image
+                src={ABOUT_PHOTO.src}
+                alt={ABOUT_PHOTO.alt}
+                fill
+                sizes="(max-width: 640px) 288px, 320px"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-maroon-dark/70 via-transparent to-transparent" />
               <div className="absolute inset-3 rounded-[1.2rem] border border-gold/30" />
             </div>
             {/* Corner accents */}
@@ -47,7 +58,7 @@ export default function About() {
             <span className="text-2xl">🏆</span>
             <div>
               <strong className="block font-heading text-lg text-maroon-dark leading-none">20+</strong>
-              <span className="text-xs text-ink/60">Years Legacy</span>
+              <span className="text-xs text-ink/60">{t.about.badgeLabel}</span>
             </div>
           </motion.div>
         </motion.div>
@@ -58,26 +69,18 @@ export default function About() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
         >
-          <span className="section-tag">About Us</span>
+          <span className="section-tag">{t.about.tag}</span>
           <h2 className="section-title">
-            Preserving a 2,000-Year-Old
-            <br /> Art Form With Love
+            {t.about.titleLine1}
+            <br /> {t.about.titleLine2}
           </h2>
-          <p className="section-desc">
-            Pooja Cultural Centre is a sanctuary for the classical Indian dance form of
-            Bharathanatyam. Rooted in tradition and taught with modern warmth, our academy
-            nurtures students of every age to discover rhythm, storytelling and grace through
-            Natya. From the first Adavu to a graceful Arangetram, we walk every step with you.
-          </p>
-          <p className="section-desc">
-            Our curriculum blends the rigor of the Guru-Shishya Parampara with structured,
-            joyful learning — building not just dancers, but confident performers and storytellers.
-          </p>
+          <p className="section-desc">{t.about.desc1}</p>
+          <p className="section-desc">{t.about.desc2}</p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
             {stats.map((s) => (
               <div key={s.label} className="text-left">
-                <div className="font-heading text-3xl font-bold text-maroon-dark">
+                <div className="font-body text-3xl font-bold text-maroon-dark">
                   <AnimatedCounter to={s.to} />
                 </div>
                 <p className="text-xs sm:text-sm text-ink/60 mt-1">{s.label}</p>
@@ -86,7 +89,7 @@ export default function About() {
           </div>
 
           <a href="#guru" className="btn btn-maroon">
-            Meet Our Guru →
+            {t.about.cta} →
           </a>
         </motion.div>
       </div>

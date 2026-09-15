@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-
-const INFO = [
-  { icon: "📍", text: "123 Temple Street, Mylapore, Chennai, India" },
-  { icon: "📞", text: "+91 98765 43210" },
-  { icon: "✉️", text: "hello@poojaculturalcentre.com" },
-  { icon: "🕐", text: "Mon – Sat: 4:00 PM – 8:00 PM" },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { HERO_PHOTO } from "@/lib/photos";
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [toast, setToast] = useState(false);
+
+  const INFO = [
+    { icon: "📍", text: t.contact.address },
+    { icon: "📞", text: t.contact.phone },
+    { icon: "✉️", text: t.contact.email },
+    { icon: "🕐", text: t.contact.hours },
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,20 +25,26 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 sm:py-32 bg-white relative">
-      <div className="section-container grid md:grid-cols-2 gap-14">
+    <section id="contact" className="py-24 sm:py-32 bg-white relative overflow-hidden">
+      <Image
+        src={HERO_PHOTO.src}
+        alt=""
+        fill
+        sizes="100vw"
+        className="object-cover object-center opacity-[0.08] pointer-events-none"
+      />
+      <div className="absolute inset-0 bg-white/85" />
+
+      <div className="section-container relative z-10 grid md:grid-cols-2 gap-14">
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="section-tag">Get In Touch</span>
-          <h2 className="section-title">Begin Your Dance Journey</h2>
-          <p className="section-desc">
-            Have a question or ready to join? Reach out — we&rsquo;d love to welcome you to our
-            Natya family.
-          </p>
+          <span className="section-tag">{t.contact.tag}</span>
+          <h2 className="section-title">{t.contact.title}</h2>
+          <p className="section-desc">{t.contact.desc}</p>
 
           <ul className="space-y-4 mb-8">
             {INFO.map((item) => (
@@ -69,14 +79,14 @@ export default function Contact() {
           className="bg-cream rounded-3xl shadow-card p-8 sm:p-10 space-y-5"
         >
           <div className="grid sm:grid-cols-2 gap-5">
-            <Field id="fname" label="Your Name" type="text" required />
-            <Field id="femail" label="Email Address" type="email" required />
+            <Field id="fname" label={t.contact.formName} type="text" required />
+            <Field id="femail" label={t.contact.formEmail} type="email" required />
           </div>
-          <Field id="finterest" label="Interested Program" type="text" />
-          <Field id="fmessage" label="Your Message" as="textarea" required />
+          <Field id="finterest" label={t.contact.formInterest} type="text" />
+          <Field id="fmessage" label={t.contact.formMessage} as="textarea" required />
 
           <button type="submit" className="btn btn-gold w-full">
-            Send Message ✉️
+            {t.contact.formSend} ✉️
           </button>
         </motion.form>
       </div>
@@ -89,7 +99,7 @@ export default function Contact() {
             exit={{ opacity: 0, y: 40 }}
             className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-maroon text-cream px-6 py-3.5 rounded-full shadow-2xl flex items-center gap-2 z-[95]"
           >
-            ✅ Message sent successfully!
+            ✅ {t.contact.toast}
           </motion.div>
         )}
       </AnimatePresence>

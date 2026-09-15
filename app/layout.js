@@ -1,4 +1,5 @@
 import { Cinzel, Playfair_Display, Poppins } from "next/font/google";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -35,7 +36,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${cinzel.variable} ${playfair.variable} ${poppins.variable} font-body bg-cream text-ink antialiased`}
       >
-        {children}
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

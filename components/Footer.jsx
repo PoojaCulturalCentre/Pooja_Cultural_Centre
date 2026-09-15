@@ -1,6 +1,10 @@
 "use client";
 
+import { ALL_PHOTO_CREDITS } from "@/lib/photos";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+
 export default function Footer() {
+  const { t } = useLanguage();
   const year = new Date().getFullYear();
 
   return (
@@ -21,38 +25,35 @@ export default function Footer() {
               Pooja <em className="text-gold not-italic italic">Cultural Centre</em>
             </span>
           </a>
-          <p className="text-cream/60 text-sm leading-relaxed">
-            Preserving the art of Bharathanatyam through tradition, discipline and joyful
-            expression.
-          </p>
+          <p className="text-cream/60 text-sm leading-relaxed">{t.footer.tagline}</p>
         </div>
 
         <FooterCol
-          title="Quick Links"
+          title={t.footer.quickLinks}
           links={[
-            ["About", "#about"],
-            ["Classes", "#classes"],
-            ["Gallery", "#gallery"],
-            ["Contact", "#contact"],
+            [t.footer.linkAbout, "#about"],
+            [t.footer.linkClasses, "#classes"],
+            [t.footer.linkGallery, "#gallery"],
+            [t.footer.linkContact, "#contact"],
           ]}
         />
         <FooterCol
-          title="Programs"
+          title={t.footer.programs}
           links={[
-            ["Beginners", "#classes"],
-            ["Advanced", "#classes"],
-            ["Arangetram", "#classes"],
-            ["Online", "#classes"],
+            [t.footer.linkBeginners, "#classes"],
+            [t.footer.linkAdvanced, "#classes"],
+            [t.footer.linkArangetram, "#classes"],
+            [t.footer.linkOnline, "#classes"],
           ]}
         />
 
         <div>
-          <h4 className="font-heading font-semibold text-gold mb-3">Newsletter</h4>
-          <p className="text-cream/60 text-sm mb-4">Get updates on events &amp; new batches.</p>
+          <h4 className="font-heading font-semibold text-gold mb-3">{t.footer.newsletter}</h4>
+          <p className="text-cream/60 text-sm mb-4">{t.footer.newsletterDesc}</p>
           <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
             <input
               type="email"
-              placeholder="Your email"
+              placeholder={t.footer.emailPlaceholder}
               className="flex-1 min-w-0 rounded-full bg-cream/10 px-4 py-2.5 text-sm placeholder-cream/40 outline-none focus:ring-2 focus:ring-gold"
             />
             <button
@@ -67,8 +68,22 @@ export default function Footer() {
       </div>
 
       <div className="text-center text-cream/50 text-xs py-6 border-t border-cream/10">
-        © {year} Pooja Cultural Centre. All rights reserved.
+        © {year} Pooja Cultural Centre. {t.footer.copyright}
       </div>
+
+      {/* <div className="section-container pb-6">
+        <p className="text-cream/35 text-[0.7rem] text-center leading-relaxed">
+          Photos via Wikimedia Commons:{" "}
+          {ALL_PHOTO_CREDITS.map((c, i) => (
+            <span key={c.url}>
+              <a href={c.url} target="_blank" rel="noopener noreferrer" className="hover:text-gold underline decoration-cream/20">
+                {c.name} ({c.license})
+              </a>
+              {i < ALL_PHOTO_CREDITS.length - 1 ? ", " : ""}
+            </span>
+          ))}
+        </p>
+      </div> */}
     </footer>
   );
 }

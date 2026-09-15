@@ -1,10 +1,23 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
+import { GURU_EYE_PHOTO } from "@/lib/photos";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Guru() {
+  const { t } = useLanguage();
   return (
-    <section id="guru" className="py-24 sm:py-32 bg-gradient-to-b from-maroon-dark to-maroon relative overflow-hidden">
+    <section id="guru" className="py-24 sm:py-32 relative overflow-hidden bg-maroon">
+      <Image
+        src={GURU_EYE_PHOTO.src}
+        alt={GURU_EYE_PHOTO.alt}
+        fill
+        sizes="100vw"
+        className="object-cover opacity-60"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-maroon-dark/85 via-maroon/75 to-maroon-dark/90" />
+
       <svg viewBox="0 0 200 200" className="absolute top-0 left-1/2 -translate-x-1/2 w-[40rem] h-[40rem] text-gold/5 animate-spin-slow">
         <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" strokeWidth="0.6" />
         <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="0.6" />
@@ -17,7 +30,7 @@ export default function Guru() {
           viewport={{ once: true }}
           className="section-tag center !text-gold-light"
         >
-          Our Founder
+          {t.guru.tag}
         </motion.span>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -26,7 +39,7 @@ export default function Guru() {
           transition={{ delay: 0.1 }}
           className="section-title center !text-cream"
         >
-          Meet the Guru
+          {t.guru.title}
         </motion.h2>
 
         <motion.div
@@ -43,18 +56,13 @@ export default function Guru() {
             </div>
           </div>
 
-          <h3 className="font-heading text-2xl font-bold text-maroon-dark">Smt. Pooja Rajan</h3>
+          <h3 className="font-heading text-2xl font-bold text-maroon-dark">{t.guru.name}</h3>
           <p className="text-gold-dark font-semibold text-sm mb-5 tracking-wide uppercase">
-            Founder &amp; Artistic Director
+            {t.guru.role}
           </p>
-          <p className="text-ink/70 leading-relaxed mb-6">
-            A senior disciple of the Kalakshetra tradition with over two decades of stage and
-            teaching experience, Smt. Pooja Rajan has trained hundreds of students across three
-            generations, choreographed award-winning productions, and performed on prestigious
-            stages across the world.
-          </p>
+          <p className="text-ink/70 leading-relaxed mb-6">{t.guru.bio}</p>
           <blockquote className="font-heading italic text-lg text-maroon border-l-4 border-gold pl-4 text-left mb-6">
-            &ldquo;Dance is prayer in motion — every mudra a word, every Adavu a heartbeat.&rdquo;
+            &ldquo;{t.guru.quote}&rdquo;
           </blockquote>
 
           <div className="flex justify-center gap-4">

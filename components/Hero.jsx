@@ -1,7 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { HERO_PHOTO } from "@/lib/photos";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import MandalaShape from "./Mandala";
 
 function Petals() {
   const [petals, setPetals] = useState([]);
@@ -49,34 +53,62 @@ const item = {
 };
 
 export default function Hero() {
+  const { t } = useLanguage();
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+
+  const yTopMandala = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const yBottomMandala = useTransform(scrollYProgress, [0, 1], [0, 160]);
+  const yContent = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
   return (
     <section
+      ref={ref}
       id="home"
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-radial-maroon"
     >
+      {/* Background photograph */}
+      <div className="absolute inset-0">
+        <Image
+          src={HERO_PHOTO.src}
+          alt={HERO_PHOTO.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-45"
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(138,26,50,0.72)_0%,rgba(63,10,23,0.9)_70%)]" />
+      </div>
+
       {/* Mandala ornaments */}
-      <svg
+      <motion.svg
+        style={{ y: yTopMandala }}
         viewBox="0 0 200 200"
         className="absolute -top-16 -left-16 w-72 h-72 sm:w-96 sm:h-96 text-gold/20 animate-spin-slow"
       >
         <MandalaShape />
-      </svg>
-      <svg
+      </motion.svg>
+      <motion.svg
+        style={{ y: yBottomMandala }}
         viewBox="0 0 200 200"
         className="absolute -bottom-24 -right-16 w-80 h-80 sm:w-[28rem] sm:h-[28rem] text-gold/15 animate-spin-slow-reverse"
       >
         <MandalaShape />
-      </svg>
+      </motion.svg>
 
       <Petals />
 
-      <div className="relative z-10 section-container flex flex-col items-center text-center pt-24 pb-16">
+      <motion.div
+        style={{ y: yContent, opacity: contentOpacity }}
+        className="relative z-10 section-container flex flex-col items-center text-center pt-24 pb-16"
+      >
         <motion.div variants={container} initial="hidden" animate="show" className="flex flex-col items-center">
           <motion.p
             variants={item}
             className="flex items-center gap-2 text-gold-light/90 tracking-[0.35em] uppercase text-xs sm:text-sm mb-5"
           >
-            <i className="inline-block">✺</i> Welcome to
+            <i className="inline-block">✺</i> {t.hero.kicker}
           </motion.p>
 
           <motion.h1
@@ -87,16 +119,16 @@ export default function Hero() {
           </motion.h1>
 
           <motion.p variants={item} className="text-cream/85 text-base sm:text-lg max-w-2xl mb-10 leading-relaxed">
-            Where Tradition Meets Grace — a home for the timeless art of{" "}
-            <span className="text-gold-light font-semibold">Bharathanatyam</span>
+            {t.hero.subtitlePrefix}{" "}
+            <span className="text-gold-light font-semibold">{t.hero.subtitleWord}</span>
           </motion.p>
 
           <motion.div variants={item} className="flex flex-col sm:flex-row items-center gap-4 mb-12">
             <a href="#classes" className="btn btn-gold">
-              🪷 Explore Classes
+              🪷 {t.hero.exploreClasses}
             </a>
             <a href="#gallery" className="btn btn-outline">
-              ▶ Watch Performances
+              ▶ {t.hero.watchPerformances}
             </a>
           </motion.div>
 
@@ -112,31 +144,7 @@ export default function Hero() {
             ))}
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
-  );
-}
-
-function MandalaShape() {
-  return (
-    <g stroke="currentColor" fill="none" strokeWidth="0.6">
-      <circle cx="100" cy="100" r="96" />
-      <circle cx="100" cy="100" r="80" />
-      <circle cx="100" cy="100" r="64" />
-      <path d="M100 4 L100 196" />
-      <path d="M4 100 L196 100" />
-      <path d="M29 29 L171 171" />
-      <path d="M171 29 L29 171" />
-      <g fill="currentColor" stroke="none">
-        <circle cx="100" cy="20" r="3" />
-        <circle cx="100" cy="180" r="3" />
-        <circle cx="20" cy="100" r="3" />
-        <circle cx="180" cy="100" r="3" />
-        <circle cx="41" cy="41" r="3" />
-        <circle cx="159" cy="159" r="3" />
-        <circle cx="159" cy="41" r="3" />
-        <circle cx="41" cy="159" r="3" />
-      </g>
-    </g>
   );
 }
