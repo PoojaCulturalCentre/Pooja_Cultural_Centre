@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ALL_PHOTO_CREDITS } from "@/lib/photos";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -67,8 +68,25 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="text-center text-cream/50 text-xs py-6 border-t border-cream/10">
+      <div className="section-container flex justify-center pb-6">
+        <Link
+          href="/admin/login"
+          className="rounded-full border border-gold/40 text-gold text-xs font-semibold px-5 py-2 hover:bg-gold/10 hover:border-gold transition-colors"
+        >
+          Admin Login
+        </Link>
+      </div>
+
+      <div className="relative text-center text-cream/50 text-xs py-6 border-t border-cream/10">
         © {year} Pooja Cultural Centre. {t.footer.copyright}
+        <a
+          href="https://vikrams.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 block sm:absolute sm:top-1/2 sm:right-6 sm:mt-0 sm:-translate-y-1/2 text-black visited:text-black hover:text-black transition-colors"
+        >
+          Developed by <span className="font-semibold text-black">vDev</span>
+        </a>
       </div>
 
       {/* <div className="section-container pb-6">

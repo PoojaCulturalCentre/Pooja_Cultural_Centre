@@ -6,13 +6,19 @@ html {
   scroll-behavior: smooth;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4af37 #fff8ec;
+}
+
 ::selection {
   background: #d4af37;
   color: #3f0a17;
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: #fff8ec;
@@ -20,6 +26,13 @@ html {
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(#d4af37, #a9832a);
   border-radius: 10px;
+}
+
+.scrollbar-dark {
+  scrollbar-color: #d4af37 transparent;
+}
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 @layer components {
