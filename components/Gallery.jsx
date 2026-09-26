@@ -26,9 +26,9 @@ function useAutoSwipe(count) {
   return [index, setIndex];
 }
 
-function EmptyState({ icon, message }) {
+function EmptyState({ icon, message, className = "h-72 sm:h-80" }) {
   return (
-    <div className="h-72 sm:h-80 rounded-2xl border-2 border-dashed border-maroon/15 bg-maroon/[0.03] flex flex-col items-center justify-center gap-3 text-center px-6">
+    <div className={`${className} rounded-2xl border-2 border-dashed border-maroon/15 bg-maroon/[0.03] flex flex-col items-center justify-center gap-3 text-center px-6`}>
       <span className="text-4xl">{icon}</span>
       <p className="text-ink/50 text-sm">{message}</p>
     </div>
@@ -101,10 +101,10 @@ function VideoCarousel({ videos, tag, emptyMessage }) {
     <div>
       <h3 className="font-heading text-lg font-bold text-maroon-dark mb-4 text-center">{tag}</h3>
       {videos.length === 0 ? (
-        <EmptyState icon="🎥" message={emptyMessage} />
+        <EmptyState icon="🎥" message={emptyMessage} className="h-96 sm:h-[28rem]" />
       ) : (
         <>
-          <div className="relative h-72 sm:h-80 rounded-2xl overflow-hidden shadow-card bg-black">
+          <div className="relative h-96 sm:h-[28rem] rounded-2xl overflow-hidden shadow-card bg-black">
             <AnimatePresence mode="wait">
               <motion.div
                 key={videos[index].id}
@@ -179,7 +179,7 @@ export default function Gallery() {
         <span className="section-tag center block text-center">{t.gallery.tag}</span>
         <h2 className="section-title center">{t.gallery.title}</h2>
 
-        <div className="grid md:grid-cols-2 gap-10 mt-12">
+        <div className="flex flex-col gap-14 mt-12">
           <PhotoCarousel images={images} tag={t.gallery.photosTag} emptyMessage={t.gallery.photosEmpty} />
           <VideoCarousel videos={videos} tag={t.gallery.videosTag} emptyMessage={t.gallery.videosEmpty} />
         </div>

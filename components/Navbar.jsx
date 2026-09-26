@@ -115,7 +115,7 @@ export default function Navbar() {
               variants={menuContainer}
               initial="hidden"
               animate="show"
-              className="max-w-md mx-auto flex flex-col gap-1.5 px-6 py-6"
+              className="max-w-md mx-auto flex flex-col gap-1.5 px-6 py-6 max-h-[calc(100dvh-6rem)] overflow-y-auto"
             >
               <motion.div variants={menuItem} className="flex justify-center pb-4 mb-2 border-b border-cream/10">
                 <LanguageSwitcher variant="mobile" />

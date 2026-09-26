@@ -2,17 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ALL_PHOTO_CREDITS, GURU_PHOTO, GALLERY_PHOTOS } from "@/lib/photos";
+import { FOOTER_STRIP_PHOTOS } from "@/lib/photos";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import pccLogo from "@/app/images/pcc_logo.png";
 
-const FOOTER_STRIP = [
-  { photo: GURU_PHOTO, shape: "rounded-full", size: "w-11 h-11", offset: "" },
-  { photo: GALLERY_PHOTOS[0], shape: "rounded-2xl", size: "w-14 h-14", offset: "-translate-y-2" },
-  { photo: GALLERY_PHOTOS[1], shape: "rounded-full", size: "w-16 h-16", offset: "" },
-  { photo: GALLERY_PHOTOS[2], shape: "rounded-2xl", size: "w-14 h-14", offset: "-translate-y-2" },
-  { photo: GALLERY_PHOTOS[3], shape: "rounded-full", size: "w-11 h-11", offset: "" },
-];
+const FOOTER_STRIP = FOOTER_STRIP_PHOTOS.map((photo) => ({
+  photo,
+  shape: "rounded-full",
+  size: "w-14 h-14 sm:w-16 sm:h-16",
+}));
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -20,11 +18,11 @@ export default function Footer() {
 
   return (
     <footer className="bg-maroon-dark text-cream pt-4">
-      <div className="flex justify-center items-center gap-4 py-8">
-        {FOOTER_STRIP.map(({ photo, shape, size, offset }, i) => (
+      <div className="flex justify-center items-center gap-5 sm:gap-6 py-8">
+        {FOOTER_STRIP.map(({ photo, shape, size }, i) => (
           <span
-            key={photo.src}
-            className={`relative ${size} ${shape} ${offset} overflow-hidden border-2 border-gold/60 shadow-md animate-float shrink-0`}
+            key={photo.id}
+            className={`relative ${size} ${shape} overflow-hidden border-2 border-gold/60 shadow-md animate-float shrink-0`}
             style={{ animationDelay: `${i * 0.3}s` }}
           >
             <Image src={photo.src} alt={photo.alt} fill sizes="64px" className="object-cover" />

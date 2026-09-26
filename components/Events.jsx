@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import MandalaShape from "./Mandala";
@@ -9,20 +9,28 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const EVENTS_BG = GALLERY_PHOTOS.find((p) => p.id === "temple") ?? GALLERY_PHOTOS[0];
 
-const EVENT_KEYS = [
-  { key: "navratri", date: "05", month: "OCT" },
-  { key: "arangetrams", date: "18", month: "NOV" },
-  { key: "natyanjaliWinter", date: "21", month: "DEC" },
-  { key: "pongal", date: "14", month: "JAN" },
-];
+const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+function formatEventDate(dateStr) {
+  const [, month, day] = dateStr.split("-");
+  return { day, month: MONTHS[Number(month) - 1] };
+}
 
 export default function Events() {
   const { t } = useLanguage();
+  const [events, setEvents] = useState([]);
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
 
   const yTop = useTransform(scrollYProgress, [0, 1], [-60, 80]);
   const yBottom = useTransform(scrollYProgress, [0, 1], [60, -80]);
+
+  useEffect(() => {
+    fetch("/api/events")
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setEvents)
+      .catch(() => setEvents([]));
+  }, []);
 
   return (
     <section id="events" ref={ref} className="relative py-24 sm:py-32 bg-maroon-dark overflow-hidden">
@@ -54,39 +62,49 @@ export default function Events() {
         <span className="section-tag center block text-center !text-gold-light">{t.events.tag}</span>
         <h2 className="section-title center !text-cream">{t.events.title}</h2>
 
-        <div className="relative mt-16 max-w-3xl mx-auto">
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] timeline-line hidden sm:block" />
-
-          <div className="flex flex-col gap-10">
-            {EVENT_KEYS.map((e, i) => (
-              <motion.div
-                key={e.key}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false, amount: 0.3 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                className={`relative sm:w-1/2 ${i % 2 === 0 ? "sm:pr-10 sm:self-start sm:text-right" : "sm:pl-10 sm:self-end"}`}
-              >
-                <span
-                  className={`hidden sm:flex absolute top-2 ${
-                    i % 2 === 0 ? "-right-3" : "-left-3"
-                  } w-6 h-6 rounded-full bg-gold border-4 border-maroon-dark shadow-md`}
-                />
-                <div className="bg-white rounded-2xl shadow-card p-6 flex gap-5 items-start hover:shadow-gold transition-shadow duration-300">
-                  <div className={`flex flex-col items-center justify-center bg-maroon text-cream rounded-xl w-16 h-16 shrink-0 ${i % 2 === 0 ? "sm:order-2" : ""}`}>
-                    <span className="font-body font-bold text-xl leading-none">{e.date}</span>
-                    <span className="text-[0.65rem] tracking-widest">{e.month}</span>
-                  </div>
-                  <div className={i % 2 === 0 ? "sm:order-1 sm:text-right" : ""}>
-                    <h3 className="font-heading font-bold text-lg text-maroon-dark mb-1">{t.events.items[e.key].title}</h3>
-                    <p className="text-xs text-gold-dark font-semibold mb-2">📍 {t.events.items[e.key].place}</p>
-                    <p className="text-sm text-ink/60">{t.events.items[e.key].desc}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+        {events.length === 0 ? (
+          <div className="max-w-md mx-auto mt-16 rounded-2xl border-2 border-dashed border-cream/15 bg-cream/5 flex flex-col items-center justify-center gap-3 text-center px-6 py-14">
+            <span className="text-4xl">🎉</span>
+            <p className="text-cream/60 text-sm">{t.events.empty}</p>
           </div>
-        </div>
+        ) : (
+          <div className="relative mt-16 max-w-3xl mx-auto">
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] timeline-line hidden sm:block" />
+
+            <div className="flex flex-col gap-10">
+              {events.map((e, i) => {
+                const { day, month } = formatEventDate(e.event_date);
+                return (
+                  <motion.div
+                    key={e.id}
+                    initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: false, amount: 0.3 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className={`relative sm:w-1/2 ${i % 2 === 0 ? "sm:pr-10 sm:self-start sm:text-right" : "sm:pl-10 sm:self-end"}`}
+                  >
+                    <span
+                      className={`hidden sm:flex absolute top-2 ${
+                        i % 2 === 0 ? "-right-3" : "-left-3"
+                      } w-6 h-6 rounded-full bg-gold border-4 border-maroon-dark shadow-md`}
+                    />
+                    <div className="bg-white rounded-2xl shadow-card p-6 flex gap-5 items-start hover:shadow-gold transition-shadow duration-300">
+                      <div className={`flex flex-col items-center justify-center bg-maroon text-cream rounded-xl w-16 h-16 shrink-0 ${i % 2 === 0 ? "sm:order-2" : ""}`}>
+                        <span className="font-body font-bold text-xl leading-none">{day}</span>
+                        <span className="text-[0.65rem] tracking-widest">{month}</span>
+                      </div>
+                      <div className={i % 2 === 0 ? "sm:order-1 sm:text-right" : ""}>
+                        <h3 className="font-heading font-bold text-lg text-maroon-dark mb-1">{e.title}</h3>
+                        <p className="text-xs text-gold-dark font-semibold mb-2">📍 {e.place}</p>
+                        {e.description && <p className="text-sm text-ink/60">{e.description}</p>}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

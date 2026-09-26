@@ -53,6 +53,27 @@ CREATE TABLE IF NOT EXISTS images (
   deleted_at TIMESTAMP NULL DEFAULT NULL
 );
 
+CREATE TABLE IF NOT EXISTS events (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  place VARCHAR(200) NOT NULL,
+  description TEXT NULL,
+  event_date DATE NOT NULL,
+  active TINYINT(1) NOT NULL DEFAULT 1,
+  deleted_at TIMESTAMP NULL DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS testimonials (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  author_name VARCHAR(150) NOT NULL,
+  role VARCHAR(150) NULL,
+  quote TEXT NOT NULL,
+  active TINYINT(1) NOT NULL DEFAULT 1,
+  deleted_at TIMESTAMP NULL DEFAULT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Seed admin user: username "vikram", password "qwerty"
 INSERT INTO admin_users (username, password_hash, name)
 SELECT 'vikram', '$2b$10$RmCrp4lj.bJgT0NrPm47yedV/GvTCB1Suyhx1DjZJYFxFe9AfBC2W', 'Pooja'

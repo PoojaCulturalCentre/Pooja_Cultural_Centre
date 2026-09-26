@@ -14,12 +14,11 @@ const NAV_ITEMS = [
   { key: "messages", label: "Messages", icon: "✉️", href: "/admin/messages" },
   { key: "videos", label: "Videos", icon: "🎬", href: "/admin/videos" },
   { key: "images", label: "Images", icon: "🖼️", href: "/admin/images" },
+  { key: "events", label: "Events", icon: "🎉", href: "/admin/events" },
+  { key: "testimonials", label: "Testimonials", icon: "💬", href: "/admin/testimonials" },
 ];
 
-const SOON_ITEMS = [
-  { key: "events", label: "Events", icon: "🎉" },
-  { key: "settings", label: "Settings", icon: "⚙️" },
-];
+const SOON_ITEMS = [{ key: "settings", label: "Settings", icon: "⚙️" }];
 
 const POLL_INTERVAL_MS = 8000;
 
