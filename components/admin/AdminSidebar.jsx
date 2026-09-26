@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import pccLogo from "@/app/images/pcc_logo.png";
 
 const NAV_ITEMS = [
   { key: "dashboard", label: "Dashboard", icon: "📊", href: "/admin/dashboard" },
@@ -18,9 +21,49 @@ const SOON_ITEMS = [
   { key: "settings", label: "Settings", icon: "⚙️" },
 ];
 
+const POLL_INTERVAL_MS = 8000;
+
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [query, setQuery] = useState("");
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notification, setNotification] = useState(null);
+  const previousCountRef = useRef(0);
+  const hasFetchedOnceRef = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/admin/messages/unread-count");
+        if (!res.ok || cancelled) return;
+        const { count } = await res.json();
+
+        if (hasFetchedOnceRef.current && count > previousCountRef.current) {
+          setNotification(
+            count - previousCountRef.current === 1
+              ? "New message received"
+              : `${count - previousCountRef.current} new messages received`
+          );
+          setTimeout(() => setNotification(null), 4000);
+        }
+
+        previousCountRef.current = count;
+        hasFetchedOnceRef.current = true;
+        setUnreadCount(count);
+      } catch {
+        // network hiccup - ignore, next poll will retry
+      }
+    };
+
+    poll();
+    const interval = setInterval(poll, POLL_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   const q = query.trim().toLowerCase();
   const navItems = useMemo(
@@ -39,8 +82,8 @@ export default function AdminSidebar() {
       rounded-3xl bg-maroon-dark text-cream/80 shadow-2xl p-5"
     >
       <div className="shrink-0 flex items-center gap-3 px-1 mb-5">
-        <span className="w-10 h-10 shrink-0 rounded-full bg-gold-gradient text-maroon-dark font-heading font-bold flex items-center justify-center">
-          P
+        <span className="w-10 h-10 shrink-0 rounded-full bg-cream flex items-center justify-center overflow-hidden">
+          <Image src={pccLogo} alt="Pooja Cultural Centre" className="w-8 h-8 object-contain" priority />
         </span>
         <div className="min-w-0">
           <div className="font-heading font-semibold text-cream text-sm truncate">Pooja Cultural Centre</div>
@@ -73,7 +116,12 @@ export default function AdminSidebar() {
                 }`}
               >
                 <span className="text-base">{item.icon}</span>
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {item.key === "messages" && unreadCount > 0 && (
+                  <span className="shrink-0 min-w-[1.25rem] h-5 px-1.5 rounded-full bg-maroon text-cream text-[0.65rem] font-bold flex items-center justify-center">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -103,10 +151,7 @@ export default function AdminSidebar() {
 
       <div className="shrink-0 mt-5 pt-5 border-t border-cream/10">
         <div className="rounded-2xl bg-cream/5 p-4">
-          <div className="text-sm font-semibold text-cream mb-1">🌸 Mock data mode</div>
-          <p className="text-cream/50 text-xs leading-relaxed mb-3">
-            This panel is running on sample data. Real data hooks up later.
-          </p>
+          
           <Link
             href="/"
             className="block text-center rounded-full bg-gold-gradient text-maroon-dark text-xs font-semibold py-2 hover:scale-[1.02] transition-transform"
@@ -115,6 +160,19 @@ export default function AdminSidebar() {
           </Link>
         </div>
       </div>
+
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 md:left-[17rem] md:translate-x-0 bg-maroon text-cream px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 z-[95] text-sm font-medium"
+          >
+            ✉️ {notification}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </aside>
   );
 }

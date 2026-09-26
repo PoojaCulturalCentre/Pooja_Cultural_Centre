@@ -11,14 +11,23 @@ export default function AdminLoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const ok = login(username.trim(), password);
-    if (ok) {
-      router.push("/admin/dashboard");
-    } else {
-      setError("Invalid username or password.");
+    setSubmitting(true);
+    setError("");
+    try {
+      const ok = await login(username.trim(), password);
+      if (ok) {
+        router.push("/admin/dashboard");
+      } else {
+        setError("Invalid username or password.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -68,15 +77,10 @@ export default function AdminLoginPage() {
 
           {error && <p className="text-maroon text-xs font-medium">{error}</p>}
 
-          <button type="submit" className="btn btn-gold mt-2">
-            Log In
+          <button type="submit" className="btn btn-gold mt-2" disabled={submitting}>
+            {submitting ? "Signing in..." : "Log In"}
           </button>
         </form>
-
-        <p className="text-ink/40 text-[0.7rem] text-center mt-6">
-          Demo credentials — username: <span className="font-semibold">pooja</span>, password:{" "}
-          <span className="font-semibold">qwerty</span>
-        </p>
       </div>
     </main>
   );

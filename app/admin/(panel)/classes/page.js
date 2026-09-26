@@ -1,6 +1,10 @@
-import { CLASSES } from "@/lib/mockAdminData";
+import { query } from "@/lib/db";
 
-export default function AdminClassesPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminClassesPage() {
+  const CLASSES = await query("SELECT id, name, schedule, students FROM classes ORDER BY id");
+
   return (
     <div className="h-full flex flex-col">
       <div className="shrink-0 px-6 sm:px-8 pt-8 pb-4">

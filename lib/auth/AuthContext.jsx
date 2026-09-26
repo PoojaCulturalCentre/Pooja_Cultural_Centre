@@ -4,9 +4,6 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "pooja_admin_auth";
 
-// Mock credentials - replace with real API-backed auth later.
-const MOCK_USER = { username: "pooja", password: "qwerty" };
-
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -28,18 +25,23 @@ export function AuthProvider({ children }) {
       user,
       ready,
       isAuthenticated: !!user,
-      login: (username, password) => {
-        if (username === MOCK_USER.username && password === MOCK_USER.password) {
-          const session = { username, name: "Pooja" };
-          setUser(session);
-          try {
-            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
-          } catch {
-            // localStorage unavailable - ignore
-          }
-          return true;
+      login: async (username, password) => {
+        const res = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (!res.ok) return false;
+
+        const session = await res.json();
+        setUser(session);
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+        } catch {
+          // localStorage unavailable - ignore
         }
-        return false;
+        return true;
       },
       logout: () => {
         setUser(null);

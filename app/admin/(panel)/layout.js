@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import NotificationBell from "@/components/admin/NotificationBell";
 
 export default function AdminPanelLayout({ children }) {
   const { user, ready, isAuthenticated, logout } = useAuth();
@@ -32,6 +33,7 @@ export default function AdminPanelLayout({ children }) {
               <span className="text-sm text-cream/70">
                 Welcome, <span className="font-semibold text-gold">{user.name}</span>
               </span>
+              <NotificationBell />
               <button
                 onClick={() => {
                   logout();

@@ -129,6 +129,8 @@ export default function Guru() {
                 <a
                   key={platform}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="w-10 h-10 rounded-full bg-maroon/10 text-maroon-dark flex items-center justify-center hover:bg-gold hover:text-maroon-dark hover:-translate-y-1 transition-all duration-300"
                 >

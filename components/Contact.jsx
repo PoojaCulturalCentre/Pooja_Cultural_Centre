@@ -10,19 +10,45 @@ import SocialIcon, { SOCIAL_LINKS } from "./SocialIcon";
 export default function Contact() {
   const { t } = useLanguage();
   const [toast, setToast] = useState(false);
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const INFO = [
     { icon: "📍", text: t.contact.address },
     { icon: "📞", text: t.contact.phone },
     { icon: "✉️", text: t.contact.email },
-    { icon: "🕐", text: t.contact.hours },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setToast(true);
-    e.target.reset();
-    setTimeout(() => setToast(false), 3000);
+    setError("");
+    setSubmitting(true);
+
+    const form = e.target;
+    const payload = {
+      name: form.fname.value,
+      email: form.femail.value,
+      interest: form.finterest.value,
+      message: form.fmessage.value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Request failed");
+
+      form.reset();
+      setToast(true);
+      setTimeout(() => setToast(false), 3000);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -63,6 +89,8 @@ export default function Contact() {
               <a
                 key={platform}
                 href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={label}
                 className="w-10 h-10 rounded-full bg-maroon text-cream flex items-center justify-center hover:bg-gold hover:text-maroon-dark hover:-translate-y-1 transition-all duration-300"
               >
@@ -87,8 +115,10 @@ export default function Contact() {
           <Field id="finterest" label={t.contact.formInterest} type="text" />
           <Field id="fmessage" label={t.contact.formMessage} as="textarea" required />
 
-          <button type="submit" className="btn btn-gold w-full">
-            {t.contact.formSend} ✉️
+          {error && <p className="text-maroon text-sm font-medium">{error}</p>}
+
+          <button type="submit" className="btn btn-gold w-full" disabled={submitting}>
+            {submitting ? "Sending..." : `${t.contact.formSend} ✉️`}
           </button>
         </motion.form>
       </div>
@@ -115,9 +145,9 @@ function Field({ id, label, type = "text", as, required }) {
   return (
     <div className="relative">
       {as === "textarea" ? (
-        <textarea id={id} rows={4} required={required} placeholder=" " className={commonClasses} />
+        <textarea id={id} name={id} rows={4} required={required} placeholder=" " className={commonClasses} />
       ) : (
-        <input id={id} type={type} required={required} placeholder=" " className={commonClasses} />
+        <input id={id} name={id} type={type} required={required} placeholder=" " className={commonClasses} />
       )}
       <label
         htmlFor={id}

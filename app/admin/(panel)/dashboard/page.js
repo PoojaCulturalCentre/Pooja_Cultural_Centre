@@ -1,7 +1,34 @@
 import Link from "next/link";
-import { STATS, STUDENTS, CLASSES, MESSAGES } from "@/lib/mockAdminData";
+import { query } from "@/lib/db";
+import { formatRelativeTime } from "@/lib/formatRelativeTime";
 
-export default function AdminOverviewPage() {
+export const dynamic = "force-dynamic";
+
+async function getOverviewData() {
+  const [studentCount, classCount, messageCount, students, classes, messages] = await Promise.all([
+    query("SELECT COUNT(*) AS count FROM students WHERE status = 'Active'"),
+    query("SELECT COUNT(*) AS count FROM classes"),
+    query("SELECT COUNT(*) AS count FROM messages"),
+    query("SELECT id, name, batch FROM students ORDER BY id LIMIT 5"),
+    query("SELECT id, name, students FROM classes ORDER BY id LIMIT 5"),
+    query(
+      "SELECT id, sender_name AS `from`, subject, created_at FROM messages ORDER BY created_at DESC LIMIT 5"
+    ),
+  ]);
+
+  const stats = [
+    { label: "Total Students", value: studentCount[0].count, icon: "🧑‍🎓" },
+    { label: "Active Classes", value: classCount[0].count, icon: "🩰" },
+    { label: "Upcoming Events", value: 3, icon: "🎉" },
+    { label: "New Messages", value: messageCount[0].count, icon: "✉️" },
+  ];
+
+  return { stats, students, classes, messages };
+}
+
+export default async function AdminOverviewPage() {
+  const { stats: STATS, students: STUDENTS, classes: CLASSES, messages: MESSAGES } = await getOverviewData();
+
   return (
     <div className="h-full flex flex-col">
       <div className="shrink-0 px-6 sm:px-8 pt-8 pb-4 flex items-center justify-between flex-wrap gap-3">
@@ -9,9 +36,7 @@ export default function AdminOverviewPage() {
           <h1 className="font-heading font-bold text-2xl sm:text-3xl text-maroon-dark">Admin Dashboard</h1>
           <p className="text-ink/50 text-sm">Overview of the academy's activity.</p>
         </div>
-        <span className="rounded-full bg-gold/15 text-gold-dark text-xs font-semibold px-3 py-1.5">
-          Showing mock data — will connect to live data soon
-        </span>
+       
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto px-6 sm:px-8 pb-8">
@@ -50,7 +75,7 @@ export default function AdminOverviewPage() {
             {MESSAGES.slice(0, 5).map((m) => (
               <div key={m.id} className="flex items-center justify-between border-t border-ink/5 pt-3 first:border-t-0 first:pt-0">
                 <div className="font-medium text-ink text-sm">{m.from}</div>
-                <span className="text-ink/40 text-xs">{m.time}</span>
+                <span className="text-ink/40 text-xs">{formatRelativeTime(m.created_at)}</span>
               </div>
             ))}
           </PreviewCard>
