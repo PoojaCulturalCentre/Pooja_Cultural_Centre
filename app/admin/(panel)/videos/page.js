@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 const EMPTY_FORM = { title: "", duration: "", file: null };
+const MAX_VIDEO_BYTES = 5.5 * 1024 * 1024;
 
 async function parseResponse(res) {
   const text = await res.text();
@@ -62,6 +63,12 @@ export default function AdminVideosPage() {
       setUploadError("Title, duration, and a video file are all required.");
       return;
     }
+    if (form.file.size > MAX_VIDEO_BYTES) {
+      setUploadError(
+        `This video is ${(form.file.size / (1024 * 1024)).toFixed(1)}MB, but the hosting platform only allows uploads up to ~5.5MB. For larger videos, upload to YouTube/Vimeo and use a video link instead — ask your developer to add that option if needed.`
+      );
+      return;
+    }
 
     setUploading(true);
     try {
@@ -95,6 +102,13 @@ export default function AdminVideosPage() {
   };
 
   const saveEdit = async (id) => {
+    if (editDraft.file && editDraft.file.size > MAX_VIDEO_BYTES) {
+      setUploadError(
+        `This video is ${(editDraft.file.size / (1024 * 1024)).toFixed(1)}MB, but the hosting platform only allows uploads up to ~5.5MB.`
+      );
+      return;
+    }
+
     setSavingEdit(true);
     try {
       const body = new FormData();
