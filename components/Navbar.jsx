@@ -5,10 +5,16 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { SOCIAL_LINKS } from "./SocialIcon";
 import pccLogo from "@/app/images/pcc_logo.png";
 
 const LINK_HREFS = ["#home", "#about", "#guru", "#classes", "#gallery", "#events", "#testimonials", "#contact"];
 const LINK_KEYS = ["home", "about", "guru", "classes", "gallery", "events", "testimonials", "contact"];
+
+const WHATSAPP_NUMBER = SOCIAL_LINKS.find((s) => s.platform === "whatsapp").href.replace("https://wa.me/", "");
+const BOOK_FREE_CLASS_HREF = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  "Hi, I’d like to book a trial class at Pooja Cultural Centre."
+)}`;
 
 const menuContainer = {
   hidden: {},
@@ -66,7 +72,12 @@ export default function Navbar() {
 
         <div className="hidden xl:flex items-center gap-4 shrink-0">
           <LanguageSwitcher />
-          <a href="#contact" className="btn btn-gold !py-2.5 !px-5 text-xs whitespace-nowrap">
+          <a
+            href={BOOK_FREE_CLASS_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-gold !py-2.5 !px-5 text-xs whitespace-nowrap"
+          >
             {t.nav.bookFreeClass}
           </a>
         </div>
@@ -125,7 +136,9 @@ export default function Navbar() {
 
               <motion.a
                 variants={menuItem}
-                href="#contact"
+                href={BOOK_FREE_CLASS_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
                 className="btn btn-gold justify-center mt-4 !py-3"
               >

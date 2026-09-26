@@ -2,7 +2,6 @@ import Preloader from "@/components/Preloader";
 import ScrollProgress from "@/components/ScrollProgress";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Marquee from "@/components/Marquee";
 import About from "@/components/About";
 import Guru from "@/components/Guru";
 import Classes from "@/components/Classes";
@@ -21,7 +20,6 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Marquee />
         <About />
         <Guru />
         <Classes />

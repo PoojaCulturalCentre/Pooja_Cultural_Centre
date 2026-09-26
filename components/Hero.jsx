@@ -118,6 +118,13 @@ export default function Hero() {
             Pooja Cultural Centre
           </motion.h1>
 
+          <motion.p
+            variants={item}
+            className="flex items-center gap-1.5 text-gold-light/80 tracking-[0.2em] uppercase text-xs sm:text-sm mb-3"
+          >
+            <i className="inline-block">📍</i> {t.hero.location}
+          </motion.p>
+
           <motion.p variants={item} className="text-cream/85 text-base sm:text-lg max-w-2xl mb-10 leading-relaxed">
             {t.hero.subtitlePrefix}{" "}
             <span className="text-gold-light font-semibold">{t.hero.subtitleWord}</span>
@@ -130,18 +137,6 @@ export default function Hero() {
             <a href="#gallery" className="btn btn-outline">
               ▶ {t.hero.watchPerformances}
             </a>
-          </motion.div>
-
-          <motion.div variants={item} className="flex items-center gap-3">
-            {Array.from({ length: 7 }).map((_, i) => (
-              <span
-                key={i}
-                className="ghungroo"
-                style={{
-                  animation: `ghungrooSway 1.6s ease-in-out ${i * 0.12}s infinite`,
-                }}
-              />
-            ))}
           </motion.div>
         </motion.div>
       </motion.div>
