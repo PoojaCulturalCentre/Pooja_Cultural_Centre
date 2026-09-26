@@ -4,6 +4,15 @@ import { useEffect, useState } from "react";
 
 const EMPTY_FORM = { title: "", category: "", file: null };
 
+async function parseResponse(res) {
+  const text = await res.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(`Server error (${res.status}): ${text.slice(0, 200) || "empty response"}`);
+  }
+}
+
 export default function AdminImagesPage() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +71,7 @@ export default function AdminImagesPage() {
       body.append("file", form.file);
 
       const res = await fetch("/api/admin/images", { method: "POST", body });
-      const data = await res.json();
+      const data = await parseResponse(res);
       if (!res.ok) throw new Error(data.error || "Upload failed");
 
       setImages((prev) => [...prev, data]);
@@ -94,7 +103,7 @@ export default function AdminImagesPage() {
       if (editDraft.file) body.append("file", editDraft.file);
 
       const res = await fetch(`/api/admin/images/${id}`, { method: "PATCH", body });
-      const data = await res.json();
+      const data = await parseResponse(res);
       if (!res.ok) throw new Error(data.error || "Update failed");
 
       setImages((prev) => prev.map((img) => (img.id === id ? data : img)));

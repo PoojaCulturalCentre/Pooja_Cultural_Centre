@@ -9,23 +9,28 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const formData = await request.formData();
-  const title = formData.get("title")?.toString().trim();
-  const duration = formData.get("duration")?.toString().trim();
-  const file = formData.get("file");
+  try {
+    const formData = await request.formData();
+    const title = formData.get("title")?.toString().trim();
+    const duration = formData.get("duration")?.toString().trim();
+    const file = formData.get("file");
 
-  if (!title || !duration || !(file instanceof File) || file.size === 0) {
-    return Response.json({ error: "Title, duration, and a video file are required." }, { status: 400 });
+    if (!title || !duration || !(file instanceof File) || file.size === 0) {
+      return Response.json({ error: "Title, duration, and a video file are required." }, { status: 400 });
+    }
+    if (!file.type.startsWith("video/")) {
+      return Response.json({ error: "File must be a video." }, { status: 400 });
+    }
+
+    const url = await saveUploadedFile(file, "videos");
+    const result = await query(
+      "INSERT INTO videos (title, duration, url, active) VALUES (?, ?, ?, 1)",
+      [title, duration, url]
+    );
+
+    return Response.json({ id: result.insertId, title, duration, url, active: true }, { status: 201 });
+  } catch (err) {
+    console.error("Video upload failed:", err);
+    return Response.json({ error: `Upload failed: ${err.message}` }, { status: 500 });
   }
-  if (!file.type.startsWith("video/")) {
-    return Response.json({ error: "File must be a video." }, { status: 400 });
-  }
-
-  const url = await saveUploadedFile(file, "videos");
-  const result = await query(
-    "INSERT INTO videos (title, duration, url, active) VALUES (?, ?, ?, 1)",
-    [title, duration, url]
-  );
-
-  return Response.json({ id: result.insertId, title, duration, url, active: true }, { status: 201 });
 }

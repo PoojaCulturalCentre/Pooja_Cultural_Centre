@@ -9,23 +9,28 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const formData = await request.formData();
-  const title = formData.get("title")?.toString().trim();
-  const category = formData.get("category")?.toString().trim();
-  const file = formData.get("file");
+  try {
+    const formData = await request.formData();
+    const title = formData.get("title")?.toString().trim();
+    const category = formData.get("category")?.toString().trim();
+    const file = formData.get("file");
 
-  if (!title || !category || !(file instanceof File) || file.size === 0) {
-    return Response.json({ error: "Title, category, and an image file are required." }, { status: 400 });
+    if (!title || !category || !(file instanceof File) || file.size === 0) {
+      return Response.json({ error: "Title, category, and an image file are required." }, { status: 400 });
+    }
+    if (!file.type.startsWith("image/")) {
+      return Response.json({ error: "File must be an image." }, { status: 400 });
+    }
+
+    const url = await saveUploadedFile(file, "images");
+    const result = await query(
+      "INSERT INTO images (title, category, url, active) VALUES (?, ?, ?, 1)",
+      [title, category, url]
+    );
+
+    return Response.json({ id: result.insertId, title, category, url, active: true }, { status: 201 });
+  } catch (err) {
+    console.error("Image upload failed:", err);
+    return Response.json({ error: `Upload failed: ${err.message}` }, { status: 500 });
   }
-  if (!file.type.startsWith("image/")) {
-    return Response.json({ error: "File must be an image." }, { status: 400 });
-  }
-
-  const url = await saveUploadedFile(file, "images");
-  const result = await query(
-    "INSERT INTO images (title, category, url, active) VALUES (?, ?, ?, 1)",
-    [title, category, url]
-  );
-
-  return Response.json({ id: result.insertId, title, category, url, active: true }, { status: 201 });
 }
