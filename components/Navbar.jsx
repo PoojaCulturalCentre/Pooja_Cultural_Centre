@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import pccLogo from "@/app/images/pcc_logo.png";
 
 const LINK_HREFS = ["#home", "#about", "#guru", "#classes", "#gallery", "#events", "#testimonials", "#contact"];
 const LINK_KEYS = ["home", "about", "guru", "classes", "gallery", "events", "testimonials", "contact"];
@@ -40,14 +42,14 @@ export default function Navbar() {
           : "bg-transparent py-5"
       }`}
     >
-      <div className="mx-auto w-full max-w-[100rem] px-6 sm:px-8 flex items-center justify-between gap-4">
-        <a href="#home" className="flex items-center gap-2 group shrink-0 whitespace-nowrap">
-          <span className="text-gold text-xl group-hover:rotate-180 transition-transform duration-700">
-            ✦
-          </span>
-          <span className="font-heading font-bold text-cream text-lg sm:text-xl">
-            Pooja <em className="text-gold not-italic font-heading italic">Cultural Centre</em>
-          </span>
+      <div className="mx-auto w-full max-w-[100rem] px-8 sm:px-8 flex items-center justify-between gap-4">
+        <a href="#home" className="flex items-center shrink-0 whitespace-nowrap ml-12 sm:ml-24">
+          <Image
+            src={pccLogo}
+            alt="Pooja Cultural Centre"
+            className="h-20  sm:h-20 w-40"
+            priority
+          />
         </a>
 
         <nav className="hidden xl:flex items-center gap-3.5 shrink-0">

@@ -5,15 +5,17 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import MandalaShape from "./Mandala";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { GALLERY_PHOTOS } from "@/lib/photos";
+import { GALLERY_PHOTOS, HERO_PHOTO, ABOUT_PHOTO, NATARAJA_PHOTO } from "@/lib/photos";
+
+const findPhoto = (id) => GALLERY_PHOTOS.find((p) => p.id === id);
 
 const CLASS_KEYS = [
-  { key: "beginners", icon: "🌱" },
-  { key: "intermediate", icon: "🙏" },
-  { key: "advanced", icon: "⭐" },
-  { key: "arangetram", icon: "🎓" },
-  { key: "adult", icon: "👤" },
-  { key: "online", icon: "🎥" },
+  { key: "beginners", image: ABOUT_PHOTO },
+  { key: "intermediate", image: NATARAJA_PHOTO },
+  { key: "advanced", image: HERO_PHOTO },
+  { key: "arangetram", image: findPhoto("arangetram") },
+  { key: "adult", image: findPhoto("annual") },
+  { key: "online", image: findPhoto("thillana") },
 ];
 
 export default function Classes() {
@@ -66,8 +68,8 @@ export default function Classes() {
               whileHover={{ y: -8 }}
               className="group bg-white rounded-2xl p-8 shadow-card border border-maroon/5 hover:border-gold/40 hover:shadow-gold transition-all duration-300"
             >
-              <div className="w-14 h-14 rounded-2xl bg-gold-gradient flex items-center justify-center text-2xl mb-5 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-                {c.icon}
+              <div className="relative w-14 h-14 rounded-2xl bg-gold-gradient overflow-hidden mb-5 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                <Image src={c.image.src} alt={c.image.alt} fill sizes="56px" className="object-cover" />
               </div>
               <h3 className="font-heading text-xl font-bold text-maroon-dark mb-2">{t.classes.items[c.key].title}</h3>
               <p className="text-ink/65 text-sm leading-relaxed mb-3">{t.classes.items[c.key].desc}</p>

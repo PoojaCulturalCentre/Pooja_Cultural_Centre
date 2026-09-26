@@ -1,8 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { ALL_PHOTO_CREDITS } from "@/lib/photos";
+import { ALL_PHOTO_CREDITS, GURU_PHOTO, GALLERY_PHOTOS } from "@/lib/photos";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import pccLogo from "@/app/images/pcc_logo.png";
+
+const FOOTER_STRIP = [
+  { photo: GURU_PHOTO, shape: "rounded-full", size: "w-11 h-11", offset: "" },
+  { photo: GALLERY_PHOTOS[0], shape: "rounded-2xl", size: "w-14 h-14", offset: "-translate-y-2" },
+  { photo: GALLERY_PHOTOS[1], shape: "rounded-full", size: "w-16 h-16", offset: "" },
+  { photo: GALLERY_PHOTOS[2], shape: "rounded-2xl", size: "w-14 h-14", offset: "-translate-y-2" },
+  { photo: GALLERY_PHOTOS[3], shape: "rounded-full", size: "w-11 h-11", offset: "" },
+];
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -10,21 +20,22 @@ export default function Footer() {
 
   return (
     <footer className="bg-maroon-dark text-cream pt-4">
-      <div className="flex justify-center gap-6 py-6 text-2xl text-gold">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <span key={i} className="animate-float" style={{ animationDelay: `${i * 0.3}s` }}>
-            🔥
+      <div className="flex justify-center items-center gap-4 py-8">
+        {FOOTER_STRIP.map(({ photo, shape, size, offset }, i) => (
+          <span
+            key={photo.src}
+            className={`relative ${size} ${shape} ${offset} overflow-hidden border-2 border-gold/60 shadow-md animate-float shrink-0`}
+            style={{ animationDelay: `${i * 0.3}s` }}
+          >
+            <Image src={photo.src} alt={photo.alt} fill sizes="64px" className="object-cover" />
           </span>
         ))}
       </div>
 
       <div className="section-container grid sm:grid-cols-2 lg:grid-cols-4 gap-10 py-10 border-t border-cream/10">
         <div>
-          <a href="#home" className="flex items-center gap-2 mb-3">
-            <span className="text-gold text-xl">✦</span>
-            <span className="font-heading font-bold text-lg">
-              Pooja <em className="text-gold not-italic italic">Cultural Centre</em>
-            </span>
+          <a href="#home" className="flex items-center mb-3">
+            <Image src={pccLogo} alt="Pooja Cultural Centre" className="h-24 w-auto" />
           </a>
           <p className="text-cream/60 text-sm leading-relaxed">{t.footer.tagline}</p>
         </div>

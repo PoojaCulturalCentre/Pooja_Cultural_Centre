@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { HERO_PHOTO } from "@/lib/photos";
+import SocialIcon, { SOCIAL_LINKS } from "./SocialIcon";
 
 export default function Contact() {
   const { t } = useLanguage();
@@ -58,13 +59,14 @@ export default function Contact() {
           </ul>
 
           <div className="flex gap-3">
-            {["IG", "YT", "FB", "WA"].map((s) => (
+            {SOCIAL_LINKS.map(({ platform, label, href }) => (
               <a
-                key={s}
-                href="#"
-                className="w-10 h-10 rounded-full bg-maroon text-cream flex items-center justify-center text-xs font-bold hover:bg-gold hover:text-maroon-dark hover:-translate-y-1 transition-all duration-300"
+                key={platform}
+                href={href}
+                aria-label={label}
+                className="w-10 h-10 rounded-full bg-maroon text-cream flex items-center justify-center hover:bg-gold hover:text-maroon-dark hover:-translate-y-1 transition-all duration-300"
               >
-                {s}
+                <SocialIcon platform={platform} className="w-4 h-4" />
               </a>
             ))}
           </div>
