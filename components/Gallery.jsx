@@ -1,20 +1,162 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { GALLERY_PHOTOS } from "@/lib/photos";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import MandalaShape from "./Mandala";
 
+const AUTO_SWIPE_MS = 4500;
+
+function useAutoSwipe(count) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [count]);
+
+  useEffect(() => {
+    if (count <= 1) return;
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % count);
+    }, AUTO_SWIPE_MS);
+    return () => clearInterval(id);
+  }, [count]);
+
+  return [index, setIndex];
+}
+
+function EmptyState({ icon, message }) {
+  return (
+    <div className="h-72 sm:h-80 rounded-2xl border-2 border-dashed border-maroon/15 bg-maroon/[0.03] flex flex-col items-center justify-center gap-3 text-center px-6">
+      <span className="text-4xl">{icon}</span>
+      <p className="text-ink/50 text-sm">{message}</p>
+    </div>
+  );
+}
+
+function Dots({ count, index, onSelect }) {
+  if (count <= 1) return null;
+  return (
+    <div className="flex items-center justify-center gap-2 mt-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <button
+          key={i}
+          aria-label={`Go to slide ${i + 1}`}
+          onClick={() => onSelect(i)}
+          className={`h-2 rounded-full transition-all duration-300 ${
+            i === index ? "w-6 bg-gold" : "w-2 bg-maroon/20 hover:bg-maroon/40"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function PhotoCarousel({ images, tag, emptyMessage }) {
+  const [index, setIndex] = useAutoSwipe(images.length);
+
+  return (
+    <div>
+      <h3 className="font-heading text-lg font-bold text-maroon-dark mb-4 text-center">{tag}</h3>
+      {images.length === 0 ? (
+        <EmptyState icon="📸" message={emptyMessage} />
+      ) : (
+        <>
+          <div className="relative h-72 sm:h-80 rounded-2xl overflow-hidden shadow-card">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={images[index].id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={images[index].url}
+                  alt={images[index].title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 gallery-overlay opacity-90" />
+                <span className="absolute bottom-4 left-5 text-cream font-heading font-semibold text-lg">
+                  {images[index].title}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          <Dots count={images.length} index={index} onSelect={setIndex} />
+        </>
+      )}
+    </div>
+  );
+}
+
+function VideoCarousel({ videos, tag, emptyMessage }) {
+  const [index, setIndex] = useAutoSwipe(videos.length);
+
+  return (
+    <div>
+      <h3 className="font-heading text-lg font-bold text-maroon-dark mb-4 text-center">{tag}</h3>
+      {videos.length === 0 ? (
+        <EmptyState icon="🎥" message={emptyMessage} />
+      ) : (
+        <>
+          <div className="relative h-72 sm:h-80 rounded-2xl overflow-hidden shadow-card bg-black">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={videos[index].id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="absolute inset-0"
+              >
+                <video
+                  src={videos[index].url}
+                  className="w-full h-full object-cover"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+                <div className="absolute inset-0 gallery-overlay opacity-70 pointer-events-none" />
+                <span className="absolute bottom-4 left-5 text-cream font-heading font-semibold text-lg">
+                  {videos[index].title}
+                </span>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          <Dots count={videos.length} index={index} onSelect={setIndex} />
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function Gallery() {
   const { t } = useLanguage();
-  const [active, setActive] = useState(null);
+  const [images, setImages] = useState([]);
+  const [videos, setVideos] = useState([]);
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
 
   const yTop = useTransform(scrollYProgress, [0, 1], [-70, 70]);
   const yBottom = useTransform(scrollYProgress, [0, 1], [70, -70]);
+
+  useEffect(() => {
+    fetch("/api/images")
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setImages)
+      .catch(() => setImages([]));
+
+    fetch("/api/videos")
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setVideos)
+      .catch(() => setVideos([]));
+  }, []);
 
   return (
     <section id="gallery" ref={ref} className="relative py-24 sm:py-32 bg-white overflow-hidden">
@@ -37,79 +179,11 @@ export default function Gallery() {
         <span className="section-tag center block text-center">{t.gallery.tag}</span>
         <h2 className="section-title center">{t.gallery.title}</h2>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-          {GALLERY_PHOTOS.map((item, i) => (
-            <motion.button
-              key={item.id}
-              initial={{ opacity: 0, x: i % 3 === 0 ? -50 : i % 3 === 2 ? 50 : 0, y: i % 3 === 1 ? 40 : 0 }}
-              whileInView={{ opacity: 1, x: 0, y: 0 }}
-              viewport={{ once: false, amount: 0.2 }}
-              transition={{ duration: 0.6, delay: (i % 3) * 0.1, ease: "easeOut" }}
-              onClick={() => setActive(item)}
-              className="relative h-56 rounded-2xl overflow-hidden group cursor-pointer text-left"
-            >
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 gallery-overlay opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-              <span className="absolute bottom-4 left-5 text-cream font-heading font-semibold text-lg translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                {t.gallery.captions[item.id]}
-              </span>
-            </motion.button>
-          ))}
+        <div className="grid md:grid-cols-2 gap-10 mt-12">
+          <PhotoCarousel images={images} tag={t.gallery.photosTag} emptyMessage={t.gallery.photosEmpty} />
+          <VideoCarousel videos={videos} tag={t.gallery.videosTag} emptyMessage={t.gallery.videosEmpty} />
         </div>
       </div>
-
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] bg-black/85 flex items-center justify-center p-6"
-            onClick={() => setActive(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: "spring", damping: 20 }}
-              className="relative w-full max-w-2xl aspect-video rounded-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Image
-                src={active.src}
-                alt={active.alt}
-                fill
-                sizes="100vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-6 py-5 flex items-end justify-between gap-4">
-                <p className="text-cream font-heading text-xl sm:text-2xl font-semibold">{t.gallery.captions[active.id]}</p>
-                <a
-                  href={active.credit.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-cream/60 text-xs whitespace-nowrap hover:text-gold transition-colors"
-                >
-                  {t.gallery.photoBy}: {active.credit.name}
-                </a>
-              </div>
-              <button
-                onClick={() => setActive(null)}
-                className="absolute top-3 right-3 w-10 h-10 rounded-full bg-gold text-maroon-dark font-bold text-lg flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }

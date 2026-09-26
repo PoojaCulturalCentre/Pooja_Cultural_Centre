@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { GURU_EYE_PHOTO, NATARAJA_PHOTO } from "@/lib/photos";
+import { GURU_AVATAR_PHOTO } from "@/lib/photos";
 import SocialIcon, { SOCIAL_LINKS } from "./SocialIcon";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -13,8 +13,8 @@ export default function Guru() {
   return (
     <section id="guru" className="py-24 sm:py-32 relative overflow-hidden bg-maroon">
       <Image
-        src={GURU_EYE_PHOTO.src}
-        alt={GURU_EYE_PHOTO.alt}
+        src={GURU_AVATAR_PHOTO.src}
+        alt={GURU_AVATAR_PHOTO.alt}
         fill
         sizes="100vw"
         className="object-cover opacity-60"
@@ -57,8 +57,8 @@ export default function Guru() {
               <div className="absolute inset-0 rounded-full border-2 border-dashed border-gold animate-spin-slow" />
               <div className="absolute inset-2 rounded-full overflow-hidden bg-gold-gradient">
                 <Image
-                  src={NATARAJA_PHOTO.src}
-                  alt={NATARAJA_PHOTO.alt}
+                  src={GURU_AVATAR_PHOTO.src}
+                  alt={GURU_AVATAR_PHOTO.alt}
                   fill
                   sizes="112px"
                   className="object-cover"

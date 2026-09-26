@@ -76,7 +76,7 @@ export default function Hero() {
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-45"
+          className="object-cover object-[center_25%] opacity-45"
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(138,26,50,0.72)_0%,rgba(63,10,23,0.9)_70%)]" />
       </div>

@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SocialIcon, { SOCIAL_LINKS } from "./SocialIcon";
 
+const WHATSAPP_MESSAGE = "Hi, I'd like to know more about Pooja Cultural Centre.";
+
 export default function WhatsAppButton() {
   const [visible, setVisible] = useState(false);
   const whatsapp = SOCIAL_LINKS.find((s) => s.platform === "whatsapp");
+  const href = `${whatsapp.href}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 500);
@@ -24,7 +27,7 @@ export default function WhatsAppButton() {
           exit={{ opacity: 0, y: 20, scale: 0.8 }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          href={whatsapp.href}
+          href={href}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
