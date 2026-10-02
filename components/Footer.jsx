@@ -86,15 +86,17 @@ export default function Footer() {
         </Link>
       </div>
 
-      <div className="relative text-center text-cream/50 text-xs py-6 border-t border-cream/10">
-        © {year} Pooja Cultural Centre. {t.footer.copyright}
+      <div className="text-center text-xs py-6 border-t border-cream/10">
+        <span className="bg-gold-gradient bg-clip-text text-transparent font-medium">
+          © {year} Pooja Cultural Centre. {t.footer.copyright}
+        </span>
         <a
           href="https://vikrams.vercel.app/"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 block sm:absolute sm:top-1/2 sm:right-6 sm:mt-0 sm:-translate-y-1/2 text-black visited:text-black hover:text-black transition-colors"
+          className="mt-2 block text-black/60 hover:text-black transition-colors"
         >
-          Developed by <span className="font-semibold text-black">vDev</span>
+          Developed by <span className="font-semibold text-black/60">Vikram</span>
         </a>
       </div>
 
